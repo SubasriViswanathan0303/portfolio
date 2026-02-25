@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subasri Viswanathan — Backend Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080b10;
+    --surface: #0d1117;
+    --surface2: #131920;
+    --border: #1e2d3d;
+    --accent: #00d4aa;
+    --accent2: #0077ff;
+    --accent3: #ff6b35;
+    --text: #e6edf3;
+    --muted: #7d8590;
+    --dim: #30363d;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* Grid background */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,170,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,170,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 16px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(8,11,16,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+
+  /* SECTIONS */
+  section { position: relative; z-index: 1; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 80px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-glow {
+    position: absolute;
+    top: 20%;
+    right: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0,212,170,0.07) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .hero-glow2 {
+    position: absolute;
+    bottom: 10%;
+    left: -5%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(0,119,255,0.06) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .hero-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s forwards 0.2s;
+  }
+  .hero-label::before { content: '> '; }
+  .hero-name {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(52px, 8vw, 96px);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeUp 0.8s forwards 0.35s;
+  }
+  .hero-name span { color: var(--accent); }
+  .hero-role {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(18px, 2.5vw, 28px);
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.8s forwards 0.5s;
+  }
+  .hero-bio {
+    max-width: 580px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.9;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s forwards 0.65s;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s forwards 0.8s;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+    font-weight: 500;
+  }
+  .btn-primary:hover { background: #00ffcc; transform: translateY(-1px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+
+  .hero-stats {
+    position: absolute;
+    right: 80px;
+    bottom: 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    opacity: 0;
+    animation: fadeIn 1s forwards 1s;
+  }
+  .stat-item { text-align: right; }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label { font-size: 10px; color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
+
+  /* SECTION LAYOUT */
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 100px 48px;
+  }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 64px;
+  }
+  .section-number {
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    margin-left: 16px;
+  }
+
+  /* SKILLS */
+  .skills-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+  }
+  .skill-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 28px;
+    transition: border-color 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .skill-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .skill-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .skill-card:hover::before { opacity: 1; }
+  .skill-card-icon { font-size: 24px; margin-bottom: 16px; }
+  .skill-card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+    letter-spacing: 0.04em;
+  }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    background: rgba(0,212,170,0.08);
+    color: var(--accent);
+    border: 1px solid rgba(0,212,170,0.2);
+  }
+  .tag.blue { background: rgba(0,119,255,0.08); color: #6faef5; border-color: rgba(0,119,255,0.2); }
+  .tag.orange { background: rgba(255,107,53,0.08); color: #ff9f7a; border-color: rgba(255,107,53,0.2); }
+
+  /* EXPERIENCE */
+  .timeline { position: relative; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(180deg, var(--accent), var(--accent2), transparent);
+  }
+  .timeline-item {
+    padding-left: 48px;
+    padding-bottom: 64px;
+    position: relative;
+  }
+  .timeline-item:last-child { padding-bottom: 0; }
+  .timeline-dot {
+    position: absolute;
+    left: -5px;
+    top: 6px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+    box-shadow: 0 0 12px rgba(0,212,170,0.5);
+  }
+  .timeline-dot.blue { background: var(--accent2); box-shadow: 0 0 12px rgba(0,119,255,0.5); }
+  .timeline-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .timeline-company {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+  }
+  .timeline-period {
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.08em;
+  }
+  .timeline-role {
+    font-size: 13px;
+    color: var(--accent);
+    margin-bottom: 20px;
+    letter-spacing: 0.06em;
+  }
+  .timeline-items {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .timeline-items li {
+    color: var(--muted);
+    font-size: 13px;
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.7;
+  }
+  .timeline-items li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 11px;
+    top: 2px;
+  }
+  .highlight {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* PROJECTS */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+  }
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .project-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+  }
+  .project-card:hover { border-color: rgba(0,212,170,0.3); transform: translateY(-3px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+  .project-card:hover::after { transform: scaleX(1); }
+  .project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .project-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    background: rgba(0,212,170,0.1);
+    border: 1px solid rgba(0,212,170,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .project-icon.blue { background: rgba(0,119,255,0.1); border-color: rgba(0,119,255,0.2); }
+  .project-icon.orange { background: rgba(255,107,53,0.1); border-color: rgba(255,107,53,0.2); }
+  .project-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .project-abbr {
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    margin-bottom: 16px;
+  }
+  .project-desc {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.8;
+    margin-bottom: 20px;
+  }
+  .project-tech { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  /* AI INITIATIVES */
+  .ai-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .ai-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+  .ai-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+  .ai-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -30%;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(0,212,170,0.05) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .ai-card:hover { border-color: rgba(0,212,170,0.3); transform: translateY(-2px); }
+  .ai-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .ai-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .ai-desc {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.9;
+    margin-bottom: 16px;
+  }
+  .ai-impact {
+    font-size: 11px;
+    color: var(--accent);
+    padding: 6px 12px;
+    background: rgba(0,212,170,0.06);
+    border: 1px solid rgba(0,212,170,0.15);
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+  }
+  .ai-impact::before { content: '⚡ '; }
+
+  /* AWARDS */
+  .awards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .award-card {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    background: var(--surface);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .award-card:hover { border-color: rgba(255,107,53,0.4); }
+  .award-icon { font-size: 32px; margin-bottom: 16px; }
+  .award-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .award-org { font-size: 11px; color: var(--accent3); letter-spacing: 0.1em; margin-bottom: 12px; }
+  .award-desc { color: var(--muted); font-size: 12px; line-height: 1.7; }
+
+  /* CERTS */
+  .certs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .cert-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    transition: border-color 0.2s;
+  }
+  .cert-item:hover { border-color: rgba(0,119,255,0.4); }
+  .cert-icon { font-size: 20px; flex-shrink: 0; }
+  .cert-info flex-1 {}
+  .cert-name { font-size: 13px; color: var(--text); font-weight: 500; }
+  .cert-issuer { font-size: 11px; color: var(--muted); margin-top: 2px; }
+  .cert-year {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--muted);
+    flex-shrink: 0;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  /* CONTACT / FOOTER */
+  .contact-section { padding: 100px 48px; max-width: 1100px; margin: 0 auto; }
+  .contact-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 64px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), var(--accent3));
+  }
+  .contact-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 16px;
+  }
+  .contact-subtitle { color: var(--muted); font-size: 13px; margin-bottom: 40px; max-width: 500px; margin-left: auto; margin-right: auto; }
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    transition: all 0.2s;
+  }
+  .contact-link:hover { border-color: var(--accent); color: var(--accent); }
+  .contact-link.github:hover { border-color: #a371f7; color: #a371f7; }
+  .contact-link.mail:hover { border-color: var(--accent3); color: var(--accent3); }
+
+  footer {
+    text-align: center;
+    padding: 32px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    color: var(--dim);
+    letter-spacing: 0.1em;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Terminal cursor blink */
+  .blink {
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    background: var(--accent);
+    margin-left: 4px;
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    .hero { padding: 100px 24px 80px; }
+    .hero-stats { position: static; flex-direction: row; flex-wrap: wrap; gap: 24px; margin-top: 48px; }
+    .stat-item { text-align: left; }
+    .section-inner { padding: 80px 24px; }
+    .contact-section { padding: 80px 24px; }
+    .contact-card { padding: 40px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="#">SV.dev</a>
+  <ul class="nav-links">
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#ai-ideas">AI Ideas</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-label">Backend Engineer · Distributed Systems · .NET</div>
+  <h1 class="hero-name">Subasri<br><span>Viswanathan</span></h1>
+  <div class="hero-role">Building systems that scale<span class="blink"></span></div>
+  <p class="hero-bio">
+    Backend engineer with 4+ years architecting distributed, fault-tolerant systems using .NET, Temporal workflows, and Apache Kafka. Passionate about clean architecture, observability, and engineering software that performs reliably at scale.
+  </p>
+  <div class="hero-actions">
+    <a class="btn btn-primary" href="https://github.com/SubasriViswanathan0303" target="_blank">⬡ GitHub</a>
+    <a class="btn btn-outline" href="mailto:subasriviswanathan98@gmail.com">✉ Get in Touch</a>
+    <a class="btn btn-outline" href="https://linkedin.com/in/subasri-viswanathan" target="_blank">◎ LinkedIn</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">4+</div>
+      <div class="stat-label">Years Experience</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">40K+</div>
+      <div class="stat-label">Schedules Handled</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">99.9%</div>
+      <div class="stat-label">Uptime SLA</div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="skills-section" id="skills">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <span class="section-number">01</span>
+      <h2 class="section-title">Technical Skills</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="skills-grid">
+      <div class="skill-card reveal">
+        <div class="skill-card-icon">⬡</div>
+        <div class="skill-card-title">Core Languages & Frameworks</div>
+        <div class="skill-tags">
+          <span class="tag">C#</span>
+          <span class="tag">.NET</span>
+          <span class="tag">ASP.NET Core</span>
+          <span class="tag">ASP.NET MVC</span>
+          <span class="tag">Web API</span>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-card-icon">◈</div>
+        <div class="skill-card-title">Architecture & Backend</div>
+        <div class="skill-tags">
+          <span class="tag blue">Microservices</span>
+          <span class="tag blue">REST API</span>
+          <span class="tag blue">Clean Architecture</span>
+          <span class="tag blue">DDD</span>
+          <span class="tag blue">Distributed Systems</span>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-card-icon">⟳</div>
+        <div class="skill-card-title">Workflow & Messaging</div>
+        <div class="skill-tags">
+          <span class="tag">Temporal</span>
+          <span class="tag">Apache Kafka</span>
+          <span class="tag">Event-Driven Architecture</span>
+          <span class="tag">Message Queues</span>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-card-icon">◫</div>
+        <div class="skill-card-title">Databases</div>
+        <div class="skill-tags">
+          <span class="tag blue">SQL Server</span>
+          <span class="tag blue">MySQL</span>
+          <span class="tag blue">PostgreSQL</span>
+          <span class="tag blue">Entity Framework Core</span>
+          <span class="tag blue">Dapper</span>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-card-icon">☁</div>
+        <div class="skill-card-title">Cloud & DevOps</div>
+        <div class="skill-tags">
+          <span class="tag orange">AWS S3</span>
+          <span class="tag orange">Docker</span>
+          <span class="tag orange">Kubernetes</span>
+          <span class="tag orange">Helm Charts</span>
+          <span class="tag orange">CI/CD</span>
+          <span class="tag orange">Linux</span>
+        </div>
+      </div>
+      <div class="skill-card reveal">
+        <div class="skill-card-icon">⬡</div>
+        <div class="skill-card-title">Testing & Observability</div>
+        <div class="skill-tags">
+          <span class="tag">Unit Testing</span>
+          <span class="tag">TDD</span>
+          <span class="tag">Centralized Logging</span>
+          <span class="tag">Monitoring</span>
+          <span class="tag">Agile/Scrum</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <span class="section-number">02</span>
+      <h2 class="section-title">Experience</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="timeline">
+      <!-- Bright River -->
+      <div class="timeline-item reveal">
+        <div class="timeline-dot"></div>
+        <div class="timeline-meta">
+          <span class="timeline-company">Bright River</span>
+          <span class="timeline-period">Mar 2025 – Present</span>
+        </div>
+        <div class="timeline-role">Backend Engineer · Chennai, India</div>
+        <ul class="timeline-items">
+          <li>Architected <span class="highlight">3+ core backend microservices</span> for a distributed digital asset processing platform using .NET and ASP.NET Core, following clean architecture and Agile SDLC practices.</li>
+          <li>Integrated <span class="highlight">Temporal workflows and activities</span> to orchestrate fault-tolerant job execution pipelines, reducing pipeline failure rates by approximately 30% and improving overall system resilience.</li>
+          <li>Engineered <span class="highlight">event-driven communication</span> across distributed services using Apache Kafka, enabling real-time, decoupled data flow with zero message loss.</li>
+          <li>Established <span class="highlight">centralized logging and monitoring infrastructure</span>, cutting mean time to detect (MTTD) issues by ~40% and significantly improving operational visibility.</li>
+          <li>Championed <span class="highlight">test-driven development</span>, authoring unit tests for business-critical logic and increasing code coverage from near 0% to 70%+.</li>
+          <li>Applied <span class="highlight">Domain-Driven Design (DDD)</span> principles across all services, ensuring long-term maintainability, scalability, and clean separation of concerns.</li>
+        </ul>
+      </div>
+      <!-- Syncfusion -->
+      <div class="timeline-item reveal">
+        <div class="timeline-dot blue"></div>
+        <div class="timeline-meta">
+          <span class="timeline-company">Syncfusion Software</span>
+          <span class="timeline-period">Nov 2021 – Mar 2025</span>
+        </div>
+        <div class="timeline-role">Software Engineer II · Chennai, India</div>
+        <ul class="timeline-items">
+          <li>Engineered <span class="highlight">S3-based report export functionality</span> via REST API and UI, enabling enterprise-grade scheduled reporting adopted by 100+ enterprise customers.</li>
+          <li>Designed and delivered a <span class="highlight">high-scale scheduling engine</span> processing 40,000+ parameterized schedules, reducing report generation time by ~35% through targeted performance optimisation.</li>
+          <li>Led <span class="highlight">migration of 10+ customer production environments</span> from Windows servers to Azure Kubernetes Service (AKS) via CI/CD pipelines, improving scalability and cutting infrastructure costs.</li>
+          <li>Deployed <span class="highlight">cloud-native solutions across 5 platforms</span> (EKS, AKS, GKE, k0s, Docker) using Helm Charts, reducing release cycle time by ~25%.</li>
+          <li>Resolved <span class="highlight">20+ critical production incidents</span> including Azure SQL timeout failures and ACM certificate integration issues, consistently maintaining 99.9% uptime SLA.</li>
+          <li>Developed <span class="highlight">multi-tenant scheduling REST APIs</span>, tenant creation services, and role-based access control (RBAC) features following secure API design principles.</li>
+          <li>Optimised <span class="highlight">MySQL database performance</span>, improving query execution speed by ~40% for high-load scheduling operations.</li>
+          <li>Automated <span class="highlight">Docker deployments and Helm chart setups</span> within CI/CD workflows, reducing manual deployment effort by 60% and eliminating human error.</li>
+          <li>Collaborated with <span class="highlight">15+ enterprise customers</span> to troubleshoot technical escalations and ensure seamless adoption of platform features.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <span class="section-number">03</span>
+      <h2 class="section-title">Key Projects</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="projects-grid">
+      <!-- ARS -->
+      <div class="project-card reveal">
+        <div class="project-header">
+          <div class="project-icon">⬡</div>
+        </div>
+        <div class="project-name">Asset Retrieval Service</div>
+        <div class="project-abbr">ARS · Background Microservice</div>
+        <div class="project-desc">
+          A resilient background microservice responsible for retrieving digital assets from external sources and securely uploading them to DigitalOcean S3-compatible object storage. The service implements robust validation, configurable retry policies, and failure recovery mechanisms to ensure reliable end-to-end asset processing.
+          <br><br>
+          Architecturally integrated with <strong style="color: var(--text)">Temporal workflows</strong>, ARS participates in a broader orchestration chain where each execution step is durable and recoverable. In the event of a downstream failure, Temporal ensures the activity is retried transparently without data loss or duplicate processing, making the service highly fault-tolerant in production.
+        </div>
+        <div class="project-tech">
+          <span class="tag">.NET</span>
+          <span class="tag">Temporal</span>
+          <span class="tag">DigitalOcean S3</span>
+          <span class="tag">Retry Policies</span>
+          <span class="tag blue">Background Service</span>
+        </div>
+      </div>
+
+      <!-- JMS -->
+      <div class="project-card reveal">
+        <div class="project-header">
+          <div class="project-icon blue">◈</div>
+        </div>
+        <div class="project-name">Job Manager Service</div>
+        <div class="project-abbr">JMS · Orchestration Engine</div>
+        <div class="project-desc">
+          A centralised orchestration engine that manages the complete lifecycle of jobs across distributed microservices. JMS coordinates service-to-service interactions using <strong style="color: var(--text)">Temporal workflows and event-driven communication</strong> over Apache Kafka, ensuring real-time and fault-tolerant processing.
+          <br><br>
+          The service maintains comprehensive job state tracking, status transitions, and execution monitoring, providing a single source of truth for job state across the entire platform. It decouples producers and consumers, allowing individual services to evolve independently while preserving overall system coherence.
+        </div>
+        <div class="project-tech">
+          <span class="tag blue">ASP.NET Core</span>
+          <span class="tag blue">Temporal</span>
+          <span class="tag blue">Apache Kafka</span>
+          <span class="tag">Job Orchestration</span>
+          <span class="tag">Event-Driven</span>
+        </div>
+      </div>
+
+      <!-- DMS -->
+      <div class="project-card reveal">
+        <div class="project-header">
+          <div class="project-icon orange">◫</div>
+        </div>
+        <div class="project-name">Designer Manager Service</div>
+        <div class="project-abbr">DMS · REST API Platform</div>
+        <div class="project-desc">
+          A scalable REST API platform built with ASP.NET Core that manages designers, teams, user skills, and production facilities. DMS serves as the workforce management backbone of the platform, exposing well-defined API contracts consumed by both internal services and frontend applications.
+          <br><br>
+          The service implements thorough <strong style="color: var(--text)">business validations, role-based access control (RBAC)</strong>, and optimised database operations. A clean-architecture approach separates domain logic from infrastructure concerns, making the service easy to test, extend, and maintain as business requirements evolve.
+        </div>
+        <div class="project-tech">
+          <span class="tag orange">ASP.NET Core</span>
+          <span class="tag orange">RBAC</span>
+          <span class="tag orange">Clean Architecture</span>
+          <span class="tag">REST API</span>
+          <span class="tag blue">DDD</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI IDEAS -->
+<section class="ai-section" id="ai-ideas">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <span class="section-number">04</span>
+      <h2 class="section-title">AI-Driven Dev Initiatives</h2>
+      <div class="section-line"></div>
+    </div>
+    <p class="reveal" style="color: var(--muted); font-size: 13px; max-width: 640px; margin-bottom: 48px; line-height: 1.9;">
+      Ideas and initiatives I'm actively thinking about — ways to weave AI into day-to-day engineering workflows to reduce toil, surface issues faster, and ship higher-quality software.
+    </p>
+    <div class="ai-grid">
+      <div class="ai-card reveal">
+        <div class="ai-number">01</div>
+        <div class="ai-title">AI-Assisted Log Triage & Root Cause Summarisation</div>
+        <div class="ai-desc">
+          Integrate a language model layer into the existing centralised logging pipeline to automatically analyse clusters of correlated errors and produce plain-English summaries of likely root causes. Rather than an engineer spending 30–60 minutes filtering logs, the system surfaces a ranked hypothesis list with relevant log references, dramatically reducing MTTD further beyond the infrastructure-level gains already achieved.
+        </div>
+        <div class="ai-impact">Estimated: ~50% reduction in initial investigation time</div>
+      </div>
+
+      <div class="ai-card reveal">
+        <div class="ai-number">02</div>
+        <div class="ai-title">Temporal Workflow Test Generator</div>
+        <div class="ai-desc">
+          Build a code-generation tool that analyses Temporal workflow and activity definitions, infers the branching logic and failure scenarios, and scaffolds unit and integration test stubs automatically. Given the complexity of workflow state machines, this directly addresses one of the hardest parts of maintaining high test coverage in orchestration-heavy systems, without hand-writing repetitive boilerplate.
+        </div>
+        <div class="ai-impact">Enables faster TDD adoption across workflow-heavy services</div>
+      </div>
+
+      <div class="ai-card reveal">
+        <div class="ai-number">03</div>
+        <div class="ai-title">Schema-Aware Kafka Consumer Health Monitor</div>
+        <div class="ai-desc">
+          A lightweight AI-augmented monitor that continuously observes consumer lag, message schema drift, and throughput anomalies across Kafka topics. When a pattern deviates from the established baseline, the system generates a contextual alert explaining the probable cause (e.g., "Producer schema changed on topic X — 3 consumers are likely incompatible") rather than a raw metric alert, reducing alert fatigue and guiding faster resolution.
+        </div>
+        <div class="ai-impact">Proactive detection before downstream failures occur</div>
+      </div>
+
+      <div class="ai-card reveal">
+        <div class="ai-number">04</div>
+        <div class="ai-title">CI/CD PR Review Bot for Clean Architecture Compliance</div>
+        <div class="ai-desc">
+          A custom GitHub Actions-integrated code review bot trained on the team's architecture decision records (ADRs) and DDD conventions. It reviews incoming pull requests for cross-layer dependency violations, missing validation logic, or inconsistent domain naming, and leaves structured review comments with remediation suggestions — acting as a tireless architecture guardian that scales with the codebase.
+        </div>
+        <div class="ai-impact">Consistent architecture standards without review bottlenecks</div>
+      </div>
+
+      <div class="ai-card reveal">
+        <div class="ai-number">05</div>
+        <div class="ai-title">Natural Language to Database Query Interface</div>
+        <div class="ai-desc">
+          A developer-facing internal tool that allows engineers and product managers to query operational databases using plain English. Backed by a schema-aware LLM layer, it generates parameterised queries (not raw SQL), with built-in review steps for non-trivial operations. This eliminates the bottleneck of routing every ad-hoc data question through a backend engineer while keeping data governance intact.
+        </div>
+        <div class="ai-impact">Faster data access for non-engineering stakeholders</div>
+      </div>
+
+      <div class="ai-card reveal">
+        <div class="ai-number">06</div>
+        <div class="ai-title">Smart Kubernetes Resource Right-Sizer</div>
+        <div class="ai-desc">
+          An AI-assisted tooling layer that analyses historical Kubernetes resource utilisation metrics across pods and namespaces, then recommends right-sized CPU and memory limits. Rather than static resource caps set at initial deployment, the tool adapts suggestions based on observed traffic patterns and job execution profiles — directly reducing cloud spend while avoiding under-provisioning failures.
+        </div>
+        <div class="ai-impact">Reduced cloud cost with improved stability guarantees</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AWARDS -->
+<section id="awards">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <span class="section-number">05</span>
+      <h2 class="section-title">Recognition</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="awards-grid">
+      <div class="award-card reveal">
+        <div class="award-icon">🏆</div>
+        <div class="award-title">Most Valuable Employee — Q3 2025</div>
+        <div class="award-org">BRIGHT RIVER</div>
+        <div class="award-desc">Recognised for exceptional performance, strong service ownership, and high-impact contributions to backend microservices architecture and job orchestration platforms.</div>
+      </div>
+      <div class="award-card reveal">
+        <div class="award-icon">⭐</div>
+        <div class="award-title">Emerging Talent Award</div>
+        <div class="award-org">SYNCFUSION SOFTWARE</div>
+        <div class="award-desc">Awarded for outstanding contributions to the S3-based report export feature, delivering a secure and scalable enterprise reporting solution with measurable customer impact.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CERTS -->
+<section style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);" id="certifications">
+  <div class="section-inner">
+    <div class="section-header reveal">
+      <span class="section-number">06</span>
+      <h2 class="section-title">Certifications</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="certs-list">
+      <div class="cert-item reveal">
+        <div class="cert-icon">🎓</div>
+        <div>
+          <div class="cert-name">Build a Microservices App with .NET and NextJS from Scratch</div>
+          <div class="cert-issuer">Udemy</div>
+        </div>
+        <div class="cert-year">2025</div>
+      </div>
+      <div class="cert-item reveal">
+        <div class="cert-icon">⬡</div>
+        <div>
+          <div class="cert-name"><a href="https://anthropic.skilljar.com/claude-code-in-action" target="_blank" style="color: var(--accent); text-decoration: none;">Claude Code in Action</a></div>
+          <div class="cert-issuer">Anthropic Skilljar</div>
+        </div>
+        <div class="cert-year">Feb 2026</div>
+      </div>
+      <div class="cert-item reveal">
+        <div class="cert-icon">📘</div>
+        <div>
+          <div class="cert-name">Professional Training in Java, PHP & .NET</div>
+          <div class="cert-issuer">Accord Info Matrix</div>
+        </div>
+        <div class="cert-year">2020–2021</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<div class="contact-section">
+  <div class="contact-card reveal" id="contact">
+    <div class="contact-title">Let's Build Something<br><span style="color: var(--accent)">Remarkable</span></div>
+    <p class="contact-subtitle">Open to senior backend engineering roles, distributed systems challenges, and interesting conversations about software craft.</p>
+    <div class="contact-links">
+      <a class="contact-link mail" href="mailto:subasriviswanathan98@gmail.com">✉ subasriviswanathan98@gmail.com</a>
+      <a class="contact-link github" href="https://github.com/SubasriViswanathan0303" target="_blank">⬡ github.com/SubasriViswanathan0303</a>
+      <a class="contact-link" href="https://linkedin.com/in/subasri-viswanathan" target="_blank">◎ linkedin.com/in/subasri-viswanathan</a>
+      <a class="contact-link" href="tel:+918220413106">☎ +91 82204 13106</a>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span style="color: var(--muted)">Subasri Viswanathan</span> &nbsp;·&nbsp; Backend Engineer &nbsp;·&nbsp; Chennai, Tamil Nadu &nbsp;·&nbsp; <span style="color: var(--border)">Crafted with precision</span>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, (i % 4) * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  reveals.forEach(el => observer.observe(el));
+
+  // Typewriter for hero role
+  const roleEl = document.querySelector('.hero-role');
+  const roles = ['Building systems that scale', 'Designing for resilience', 'Engineering distributed platforms'];
+  let ri = 0, ci = 0, deleting = false;
+  const blink = roleEl.querySelector('.blink');
+  function type() {
+    const current = roles[ri];
+    const textNode = roleEl.childNodes[0];
+    if (!deleting) {
+      if (ci <= current.length) {
+        textNode.nodeValue = current.slice(0, ci++);
+        setTimeout(type, 70);
+      } else {
+        setTimeout(() => { deleting = true; type(); }, 2400);
+      }
+    } else {
+      if (ci > 0) {
+        textNode.nodeValue = current.slice(0, ci--);
+        setTimeout(type, 35);
+      } else {
+        deleting = false;
+        ri = (ri + 1) % roles.length;
+        setTimeout(type, 300);
+      }
+    }
+  }
+  // Insert text node before blink span
+  roleEl.insertBefore(document.createTextNode(''), blink);
+  setTimeout(type, 1200);
+</script>
+</body>
+</html>
